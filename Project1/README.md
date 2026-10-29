@@ -41,6 +41,23 @@ python -m experiments.run --algo tabular --bins 6 10 20 --seeds 0 1 2 3 4 --jobs
 python -m experiments.plot results/CartPole-v1/tabular/bins6 results/CartPole-v1/tabular/bins10 results/CartPole-v1/tabular/bins20 --out figures/h2_tabular_cartpole --threshold 475
 ```
 
+```bash
+# H3: DQN en CartPole, 5 seeds (~4 min con 5 procesos)
+python -m experiments.run --algo dqn --seeds 0 1 2 3 4 --jobs 5
+python -m experiments.plot results/CartPole-v1/dqn/default --out figures/h3_dqn_cartpole --threshold 475
+
+# H5: LunarLander. Default a 500k; estudio y ablación a 300k (tags con sufijo _300k)
+python -m experiments.run --env LunarLander-v3 --algo dqn --seeds 0 1 2 --jobs 3
+python -m experiments.run --env LunarLander-v3 --algo dqn --steps 300000 --seeds 0 1 2 --jobs 3
+python -m experiments.run --env LunarLander-v3 --algo dqn --vary lr 1e-4 1e-3 --steps 300000 --seeds 0 1 2 --jobs 6
+python -m experiments.run --env LunarLander-v3 --algo dqn --vary target_sync 250 4000 --steps 300000 --seeds 0 1 2 --jobs 6
+python -m experiments.run --env LunarLander-v3 --algo dqn --vary use_target false --steps 300000 --seeds 0 1 2 --jobs 3
+python -m experiments.plot results/LunarLander-v3/dqn/default --out figures/h5_lunar_default --threshold 200
+python -m experiments.plot results/LunarLander-v3/dqn/lr1e-4_300k results/LunarLander-v3/dqn/default_300k results/LunarLander-v3/dqn/lr1e-3_300k --out figures/h5_lunar_lr --threshold 200
+python -m experiments.plot results/LunarLander-v3/dqn/target_sync250_300k results/LunarLander-v3/dqn/default_300k results/LunarLander-v3/dqn/target_sync4000_300k --out figures/h5_lunar_sync --threshold 200
+python -m experiments.plot results/LunarLander-v3/dqn/default_300k results/LunarLander-v3/dqn/use_targetfalse_300k --out figures/h5_lunar_ablation --threshold 200
+```
+
 ## Hitos
 
 | Hito | Quién | Necesita | Listo cuando |
@@ -67,7 +84,7 @@ Camino crítico: H0 → H1 → H3 → H5 → H8.
 |---|---|---|
 | Tier 1, tabular y DQN (mismo presupuesto) | 200k | 3 bins × 5 seeds + 5 seeds DQN |
 | Tier 2, default | 500k | 3 seeds |
-| Tier 2, estudio de hiperparámetros | 300k | 2 parámetros × 2 valores extra × 3 seeds |
+| Tier 2, estudio de hiperparámetros | 300k | default a 300k (3 seeds, referencia común) + 2 parámetros × 2 valores extra × 3 seeds |
 | Tier 2, ablación sin target net | 300k | 3 seeds |
 | Tier 3B, Double DQN | 500k | 3 seeds (el vanilla es el default de Tier 2) |
 

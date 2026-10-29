@@ -24,3 +24,17 @@ Rangos: x ±2.4, θ ±0.2095 (límites de terminación); ẋ recortada a ±3, θ
 - Fallamos en que 10 bins sea el mejor: con 200k pasos gana 6 bins. Con este presupuesto pesa más
   visitar cada celda suficientes veces que la resolución; 10 y 20 bins siguen subiendo al final,
   así que su techo con más pasos queda abierto (útil para la discusión de H4).
+
+
+## H3 · DQN en CartPole-v1 (2026-10-29, Felipe)
+
+**Qué se corre:** DQN con los defaults del README (2 × 128, Adam 1e-3, buffer 50k, batch 64, target cada 500 pasos,
+ε 1 → 0.05 en 20k pasos), 200k pasos, seeds 0..4.
+
+**Qué esperamos:** no se escribió antes de correr (Felipe decidió terminar el código y analizar durante las corridas).
+
+**Qué pasó:** las 5 seeds llegan a 500 en algún punto de evaluación (umbral 475 entre 40k y 65k pasos), pero la curva
+oscila: hay caídas periódicas (a 87–290) y recuperaciones. Evaluación final de 100 episodios: 500 · 171.6 · 500 · 500 ·
+126.0 → **359.5 ± 193.0** entre seeds (desv. muestral, como `plot.py`). Las seeds 1 y 4 terminaron justo en una caída. ~170 s de reloj por corrida.
+Para la discusión de H4 (y decidir con Steve): ¿se reporta solo la evaluación final, o también "pasos hasta el umbral" y
+la fracción de evaluaciones ≥ 475?

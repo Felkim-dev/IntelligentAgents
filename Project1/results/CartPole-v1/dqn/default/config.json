@@ -1,0 +1,19 @@
+{
+  "env": "CartPole-v1",
+  "algo": "dqn",
+  "tag": "default",
+  "steps": 200000,
+  "hidden": 128,
+  "lr": 0.001,
+  "gamma": 0.99,
+  "buffer_size": 50000,
+  "batch_size": 64,
+  "learning_starts": 1000,
+  "train_every": 1,
+  "target_sync": 500,
+  "use_target": true,
+  "eps_end": 0.05,
+  "eps_decay_frac": 0.1,
+  "eval_every": 5000,
+  "final_eval_episodes": 100
+}
