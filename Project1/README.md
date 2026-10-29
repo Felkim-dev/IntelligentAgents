@@ -35,6 +35,12 @@ Project1/
 
 Cada figura del paper se reproduce con **un comando**; se listan aquí cuando existan (H9).
 
+```bash
+# H2: Q-learning tabular, 3 discretizaciones x 5 seeds (~1 min con 4 procesos)
+python -m experiments.run --algo tabular --bins 6 10 20 --seeds 0 1 2 3 4 --jobs 4
+python -m experiments.plot results/CartPole-v1/tabular/bins6 results/CartPole-v1/tabular/bins10 results/CartPole-v1/tabular/bins20 --out figures/h2_tabular_cartpole --threshold 475
+```
+
 ## Hitos
 
 | Hito | Quién | Necesita | Listo cuando |

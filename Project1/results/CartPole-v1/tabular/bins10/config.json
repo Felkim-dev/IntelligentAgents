@@ -1,0 +1,13 @@
+{
+  "env": "CartPole-v1",
+  "algo": "tabular",
+  "tag": "bins10",
+  "steps": 200000,
+  "bins": 10,
+  "alpha": 0.1,
+  "gamma": 0.99,
+  "eps_end": 0.05,
+  "eps_decay_frac": 0.1,
+  "eval_every": 5000,
+  "final_eval_episodes": 100
+}
