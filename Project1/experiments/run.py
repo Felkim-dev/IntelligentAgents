@@ -7,6 +7,7 @@ Desde Project1/:
 """
 import argparse
 import json
+import platform
 import time
 from collections import deque
 from itertools import product
@@ -34,6 +35,15 @@ DQN_DEFAULTS = {
                        "learning_starts": 10_000, "train_every": 4, "target_sync": 1_000,
                        "use_target": True, "eps_end": 0.05, "eps_decay_frac": 0.12},
 }
+
+
+def cpu_name():
+    """Modelo de CPU para config.json (la orden pide reportar el hardware)."""
+    try:
+        with open("/proc/cpuinfo") as f:
+            return next(line.split(":", 1)[1].strip() for line in f if line.startswith("model name"))
+    except (OSError, StopIteration):
+        return platform.processor() or platform.machine()   # Windows / macOS
 
 
 def make_agent(cfg, env, seed):
@@ -87,6 +97,8 @@ def run(cfg, seed):
     env.close()
     if cfg["algo"] == "dqn":
         torch.save(agent.q.state_dict(), out / f"seed{seed}.pt")   # para los videos (H9)
+    else:
+        np.save(out / f"seed{seed}_q.npy", agent.q)                # tabla Q entrenada
     print(f"{cfg['tag']} seed{seed}: final {mean:.1f} ± {std:.1f} en {time.perf_counter() - t0:.0f} s")
 
 
@@ -121,7 +133,8 @@ if __name__ == "__main__":
     steps = a.steps or STEPS[a.env]
     suffix = "" if steps == STEPS[a.env] else f"_{steps // 1000}k"   # default (500k) ≠ default_300k
     jobs = [({"env": a.env, "algo": a.algo, "tag": tag + suffix, "steps": steps, **hp,
-              "eval_every": EVAL_EVERY[a.env], "final_eval_episodes": FINAL_EVAL_EPISODES}, s)
+              "eval_every": EVAL_EVERY[a.env], "final_eval_episodes": FINAL_EVAL_EPISODES,
+              "hardware": cpu_name()}, s)
             for (tag, hp), s in product(variants, a.seeds)]
     with Pool(a.jobs) as pool:
         pool.map(_run, jobs)

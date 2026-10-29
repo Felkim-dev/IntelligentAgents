@@ -1,0 +1,20 @@
+{
+  "env": "LunarLander-v3",
+  "algo": "dqn",
+  "tag": "lr1e-3_300k",
+  "steps": 300000,
+  "hidden": 256,
+  "lr": 0.001,
+  "gamma": 0.99,
+  "buffer_size": 100000,
+  "batch_size": 128,
+  "learning_starts": 10000,
+  "train_every": 4,
+  "target_sync": 1000,
+  "use_target": true,
+  "eps_end": 0.05,
+  "eps_decay_frac": 0.12,
+  "eval_every": 10000,
+  "final_eval_episodes": 100,
+  "hardware": "AMD Ryzen 7 6800H with Radeon Graphics"
+}

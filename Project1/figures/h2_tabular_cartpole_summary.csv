@@ -1,0 +1,4 @@
+config,seeds,final_mean,final_std,seeds_reach_threshold,median_steps_to_threshold,frac_evals_above_threshold,wall_s_mean
+6 bins,5,186.5,33.4,0,no alcanzado,0.0,20
+10 bins,5,145.4,35.6,0,no alcanzado,0.0,19
+20 bins,5,135.1,26.5,0,no alcanzado,0.0,19

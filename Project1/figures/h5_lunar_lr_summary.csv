@@ -1,0 +1,4 @@
+config,seeds,final_mean,final_std,seeds_reach_threshold,median_steps_to_threshold,frac_evals_above_threshold,wall_s_mean
+lr 1e-4,3,36.4,123.3,0,no alcanzado,0.0,236
+lr 5e-4 (default),3,226.9,34.3,3,170000,0.17,220
+lr 1e-3,3,217.2,42.9,2,185000,0.19,232

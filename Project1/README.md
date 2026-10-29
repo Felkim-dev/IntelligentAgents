@@ -38,13 +38,13 @@ Cada figura del paper se reproduce con **un comando**; se listan aquí cuando ex
 ```bash
 # H2: Q-learning tabular, 3 discretizaciones x 5 seeds (~1 min con 4 procesos)
 python -m experiments.run --algo tabular --bins 6 10 20 --seeds 0 1 2 3 4 --jobs 4
-python -m experiments.plot results/CartPole-v1/tabular/bins6 results/CartPole-v1/tabular/bins10 results/CartPole-v1/tabular/bins20 --out figures/h2_tabular_cartpole --threshold 475
+python -m experiments.plot results/CartPole-v1/tabular/bins6 results/CartPole-v1/tabular/bins10 results/CartPole-v1/tabular/bins20 --labels "6 bins" "10 bins" "20 bins" --title "Q-learning tabular, CartPole-v1" --out figures/h2_tabular_cartpole --threshold 475
 ```
 
 ```bash
 # H3: DQN en CartPole, 5 seeds (~4 min con 5 procesos)
 python -m experiments.run --algo dqn --seeds 0 1 2 3 4 --jobs 5
-python -m experiments.plot results/CartPole-v1/dqn/default --out figures/h3_dqn_cartpole --threshold 475
+python -m experiments.plot results/CartPole-v1/dqn/default --labels "DQN" --title "DQN, CartPole-v1" --out figures/h3_dqn_cartpole --threshold 475
 
 # H5: LunarLander. Default a 500k; estudio y ablación a 300k (tags con sufijo _300k)
 python -m experiments.run --env LunarLander-v3 --algo dqn --seeds 0 1 2 --jobs 3
@@ -52,10 +52,10 @@ python -m experiments.run --env LunarLander-v3 --algo dqn --steps 300000 --seeds
 python -m experiments.run --env LunarLander-v3 --algo dqn --vary lr 1e-4 1e-3 --steps 300000 --seeds 0 1 2 --jobs 6
 python -m experiments.run --env LunarLander-v3 --algo dqn --vary target_sync 250 4000 --steps 300000 --seeds 0 1 2 --jobs 6
 python -m experiments.run --env LunarLander-v3 --algo dqn --vary use_target false --steps 300000 --seeds 0 1 2 --jobs 3
-python -m experiments.plot results/LunarLander-v3/dqn/default --out figures/h5_lunar_default --threshold 200
-python -m experiments.plot results/LunarLander-v3/dqn/lr1e-4_300k results/LunarLander-v3/dqn/default_300k results/LunarLander-v3/dqn/lr1e-3_300k --out figures/h5_lunar_lr --threshold 200
-python -m experiments.plot results/LunarLander-v3/dqn/target_sync250_300k results/LunarLander-v3/dqn/default_300k results/LunarLander-v3/dqn/target_sync4000_300k --out figures/h5_lunar_sync --threshold 200
-python -m experiments.plot results/LunarLander-v3/dqn/default_300k results/LunarLander-v3/dqn/use_targetfalse_300k --out figures/h5_lunar_ablation --threshold 200
+python -m experiments.plot results/LunarLander-v3/dqn/default --labels "DQN (500k)" --title "DQN, LunarLander-v3" --out figures/h5_lunar_default --threshold 200
+python -m experiments.plot results/LunarLander-v3/dqn/lr1e-4_300k results/LunarLander-v3/dqn/default_300k results/LunarLander-v3/dqn/lr1e-3_300k --labels "lr 1e-4" "lr 5e-4 (default)" "lr 1e-3" --title "LunarLander-v3: learning rate" --out figures/h5_lunar_lr --threshold 200
+python -m experiments.plot results/LunarLander-v3/dqn/target_sync250_300k results/LunarLander-v3/dqn/default_300k results/LunarLander-v3/dqn/target_sync4000_300k --labels "copia cada 250" "copia cada 1000 (default)" "copia cada 4000" --title "LunarLander-v3: frecuencia de copia a la target net" --out figures/h5_lunar_sync --threshold 200
+python -m experiments.plot results/LunarLander-v3/dqn/default_300k results/LunarLander-v3/dqn/use_targetfalse_300k --labels "con target net" "sin target net" --title "LunarLander-v3: ablación" --out figures/h5_lunar_ablation --threshold 200
 ```
 
 ## Hitos
@@ -75,6 +75,21 @@ python -m experiments.plot results/LunarLander-v3/dqn/default_300k results/Lunar
 | H10 Defensa cruzada | ambos | H9 | Cada uno explica el código del otro |
 
 Camino crítico: H0 → H1 → H3 → H5 → H8.
+
+## Pendientes del equipo
+
+Revisión del código contra la orden del profesor (2026-10-29). Marcar `[x]` al cerrar.
+
+- [ ] **Steve · Rangos de los bins en CartPole (H2/H4).** En "What to study" de Tier 1, la orden dice
+  *"Effect of bin count **and bin ranges** on tabular learning"*. H2 solo varió el número de bins (6/10/20) con rangos
+  fijos (ẋ ±3, θ̇ ±3.5). Falta al menos un experimento que cambie el recorte de las velocidades (p. ej. ±1.5/±2 y
+  ±5/±6, con el mejor número de bins y 5 seeds), su hipótesis en `experiments/experimentos.md` y un comando en este
+  README. Hoy los rangos están fijos en `envs/discretizer.py` (`CARTPOLE_LOW/HIGH`) y no se pueden pasar desde `run.py`.
+- [ ] **Steve · CPU de tu laptop.** La orden pide reportar el hardware. Desde el 2026-10-29, `run.py` guarda el CPU en
+  cada `config.json`, y los de H3 y H5 (laptop de Felipe) se completaron después. H2 corrió en tu laptop: falta el
+  modelo de su CPU para la tabla de hardware del paper.
+- [ ] **Steve · `run.py` cambió en H3.** Tu comando de H2 sigue igual. Ahora existe `--algo dqn`, y `--vary clave valores`
+  para el estudio de hiperparámetros. Para Double DQN (H6) solo hay que sobrescribir `DQN.next_value()` en `agents/dqn.py`.
 
 ## Reglas acordadas en H0
 

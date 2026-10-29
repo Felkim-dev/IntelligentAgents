@@ -1,0 +1,2 @@
+config,seeds,final_mean,final_std,seeds_reach_threshold,median_steps_to_threshold,frac_evals_above_threshold,wall_s_mean
+DQN,5,359.5,193.1,5,45000,0.6,170

@@ -15,5 +15,6 @@
   "eps_end": 0.05,
   "eps_decay_frac": 0.1,
   "eval_every": 5000,
-  "final_eval_episodes": 100
+  "final_eval_episodes": 100,
+  "hardware": "AMD Ryzen 7 6800H with Radeon Graphics"
 }
