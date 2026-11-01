@@ -65,3 +65,13 @@ Hardware: AMD Ryzen 7 6800H, 1 hilo por corrida, 6 en paralelo.
 - El default **alcanza el umbral** (≥ 200 en 100 episodios) en las 3 seeds a 500k.
 - Por explicar en la discusión (Felipe): por qué lr 1e-4 no despega en 300k; por qué copiar cada 4000 se queda cerca
   de 0 y cada 250 no empeora; por qué quitar la target net baja la media y sube la varianza, pero no colapsa.
+
+## H9 · GIF (episodio greedy por seed)
+
+CartPole: seeds 0, 2 y 3 llegan a 500; seeds 1 (171) y 4 (132) terminan antes. Observación de Felipe en el GIF: el carro
+se pega al borde izquierdo. Comprobado: las dos terminan con el carro en x ≈ −2.40 (límite de la pista) y el palo casi
+vertical (ángulo ≈ 0.02 rad); la seed 0 también deriva a x = −2.12 en 500 pasos. La red aprendió a mantener el palo
+arriba, pero no a corregir la deriva del carro. LunarLander: 286.4 / 253.6 / 243.3, las 3 aterrizan.
+Prueba de robustez (red de la seed 0, 20 estados iniciales distintos, `reset(seed=100..119)`): **20/20 llegan a 500**
+y todas terminan con x entre −2.08 y −2.13. La deriva es sistemática (la marca la política, no el estado inicial: este
+varía solo ±0.05) y el truncado a 500 pasos la salva. En un episodio más largo el carro llegaría al borde.
