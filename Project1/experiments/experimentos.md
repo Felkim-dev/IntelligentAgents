@@ -127,3 +127,12 @@ Sesgo de Q = media de máx_a Q(s, a) − retorno descontado real desde s, en 10 
 - **Reloj:** 647 s por corrida vs 343 s del vanilla, pero en hardware distinto (laptop de Steve vs Ryzen 7 6800H de Felipe).
   Medido en la misma laptop y con la misma carga (seeds 0–1, 30k pasos de aprendizaje), Double cuesta solo ~3 % más
   (44.4 s vs 43.0 s): el forward extra sobre s' es barato al lado del backward. Esperábamos 10–20 %; fue menos.
+## H9 · GIF (episodio greedy por seed)
+
+CartPole: seeds 0, 2 y 3 llegan a 500; seeds 1 (171) y 4 (132) terminan antes. Observación de Felipe en el GIF: el carro
+se pega al borde izquierdo. Comprobado: las dos terminan con el carro en x ≈ −2.40 (límite de la pista) y el palo casi
+vertical (ángulo ≈ 0.02 rad); la seed 0 también deriva a x = −2.12 en 500 pasos. La red aprendió a mantener el palo
+arriba, pero no a corregir la deriva del carro. LunarLander: 286.4 / 253.6 / 243.3, las 3 aterrizan.
+Prueba de robustez (red de la seed 0, 20 estados iniciales distintos, `reset(seed=100..119)`): **20/20 llegan a 500**
+y todas terminan con x entre −2.08 y −2.13. La deriva es sistemática (la marca la política, no el estado inicial: este
+varía solo ±0.05) y el truncado a 500 pasos la salva. En un episodio más largo el carro llegaría al borde.

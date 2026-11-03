@@ -56,6 +56,10 @@ python -m experiments.plot results/LunarLander-v3/dqn/default --labels "DQN (500
 python -m experiments.plot results/LunarLander-v3/dqn/lr1e-4_300k results/LunarLander-v3/dqn/default_300k results/LunarLander-v3/dqn/lr1e-3_300k --labels "lr 1e-4" "lr 5e-4 (default)" "lr 1e-3" --title "LunarLander-v3: learning rate" --out figures/h5_lunar_lr --threshold 200
 python -m experiments.plot results/LunarLander-v3/dqn/target_sync250_300k results/LunarLander-v3/dqn/default_300k results/LunarLander-v3/dqn/target_sync4000_300k --labels "copia cada 250" "copia cada 1000 (default)" "copia cada 4000" --title "LunarLander-v3: frecuencia de copia a la target net" --out figures/h5_lunar_sync --threshold 200
 python -m experiments.plot results/LunarLander-v3/dqn/default_300k results/LunarLander-v3/dqn/use_targetfalse_300k --labels "con target net" "sin target net" --title "LunarLander-v3: ablación" --out figures/h5_lunar_ablation --threshold 200
+
+# H9 · GIF de un episodio greedy por seed (figures/<env>_<tag>_seed<k>.gif)
+for s in 0 1 2 3 4; do python -m experiments.gif --env CartPole-v1 --seed $s; done
+for s in 0 1 2; do python -m experiments.gif --env LunarLander-v3 --seed $s; done
 ```
 
 ```bash
