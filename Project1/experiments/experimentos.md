@@ -127,6 +127,8 @@ Sesgo de Q = media de máx_a Q(s, a) − retorno descontado real desde s, en 10 
 - **Reloj:** 647 s por corrida vs 343 s del vanilla, pero en hardware distinto (laptop de Steve vs Ryzen 7 6800H de Felipe).
   Medido en la misma laptop y con la misma carga (seeds 0–1, 30k pasos de aprendizaje), Double cuesta solo ~3 % más
   (44.4 s vs 43.0 s): el forward extra sobre s' es barato al lado del backward. Esperábamos 10–20 %; fue menos.
+
+
 ## H9 · GIF (episodio greedy por seed)
 
 CartPole: seeds 0, 2 y 3 llegan a 500; seeds 1 (171) y 4 (132) terminan antes. Observación de Felipe en el GIF: el carro
