@@ -58,6 +58,17 @@ python -m experiments.plot results/LunarLander-v3/dqn/target_sync250_300k result
 python -m experiments.plot results/LunarLander-v3/dqn/default_300k results/LunarLander-v3/dqn/use_targetfalse_300k --labels "con target net" "sin target net" --title "LunarLander-v3: ablación" --out figures/h5_lunar_ablation --threshold 200
 ```
 
+```bash
+# H4: comparación Tier 1 (usa los resultados de H2 y H3, sin corridas nuevas)
+python -m experiments.plot results/CartPole-v1/tabular/bins6 results/CartPole-v1/tabular/bins10 results/CartPole-v1/tabular/bins20 results/CartPole-v1/dqn/default --labels "tabular 6 bins" "tabular 10 bins" "tabular 20 bins" "DQN" --title "CartPole-v1: tabular vs DQN (200k pasos)" --out figures/h4_cartpole_compare --threshold 475
+python -m experiments.plot results/CartPole-v1/tabular/bins6 results/CartPole-v1/dqn/default --labels "tabular 6 bins" "DQN" --title "CartPole-v1: tabular vs DQN" --x wall_s --out figures/h4_cartpole_wallclock
+
+# H6: Double DQN en LunarLander, 3 seeds a 500k (el vanilla es dqn/default de H5)
+python -m experiments.run --env LunarLander-v3 --algo dqn --vary double true --seeds 0 1 2 --jobs 3
+python -m experiments.plot results/LunarLander-v3/dqn/default results/LunarLander-v3/dqn/doubletrue --labels "DQN" "Double DQN" --title "LunarLander-v3: Double vs vanilla (500k)" --out figures/h6_lunar_double --threshold 200
+python -m experiments.overestimation results/LunarLander-v3/dqn/default results/LunarLander-v3/dqn/doubletrue   # sesgo de Q (tabla de H6)
+```
+
 ## Hitos
 
 | Hito | Quién | Necesita | Listo cuando |

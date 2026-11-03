@@ -4,6 +4,7 @@ Desde Project1/:
     python -m experiments.plot results/CartPole-v1/tabular/bins6 results/CartPole-v1/tabular/bins10 \
         results/CartPole-v1/tabular/bins20 --labels "6 bins" "10 bins" "20 bins" \
         --title "Q-learning tabular, CartPole-v1" --out figures/h2_tabular_cartpole --threshold 475
+Con --x wall_s el eje x es el tiempo de reloj en vez de los pasos (H4).
 Deja <out>_eval.png y <out>_train.png (entrenamiento y evaluación van en figuras separadas) y, con --threshold,
 <out>_summary.csv con las métricas entre seeds.
 """
@@ -54,6 +55,8 @@ if __name__ == "__main__":
     p.add_argument("--threshold", type=float)
     p.add_argument("--labels", nargs="+", help="un nombre por carpeta, en el mismo orden (por defecto, la carpeta)")
     p.add_argument("--title", default="")
+    p.add_argument("--x", choices=["step", "wall_s"], default="step",
+                   help="wall_s: eje x en segundos de reloj (media entre seeds en cada punto de evaluación)")
     a = p.parse_args()
     labels = a.labels or [Path(d).name for d in a.dirs]
     if len(labels) != len(a.dirs):
@@ -64,12 +67,13 @@ if __name__ == "__main__":
         for d, name in zip(a.dirs, labels):
             g, n = load(d)
             mean, std = g[col].mean(), g[col].std()
-            ax.plot(mean.index, mean, label=f"{name} (n={n})")
-            ax.fill_between(mean.index, mean - std, mean + std, alpha=0.2)
+            x = g["wall_s"].mean() if a.x == "wall_s" else mean.index
+            ax.plot(x, mean, label=f"{name} (n={n})")
+            ax.fill_between(x, mean - std, mean + std, alpha=0.2)
         if a.threshold is not None:
             ax.axhline(a.threshold, ls="--", c="gray", lw=1, label=f"umbral {a.threshold:g}")
         ax.set_title(f"{a.title}\n{'evaluación greedy (ε = 0)' if kind == 'eval' else 'entrenamiento'}".strip(), fontsize=11)
-        ax.set_xlabel("pasos de entorno")
+        ax.set_xlabel("tiempo de reloj (s)" if a.x == "wall_s" else "pasos de entorno")
         ax.set_ylabel("retorno medio (10 ep.)" if kind == "eval" else "retorno (últimos 10 ep. de entrenamiento)")
         ax.legend()
         fig.tight_layout()

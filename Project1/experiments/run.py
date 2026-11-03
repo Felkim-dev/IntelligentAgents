@@ -30,10 +30,10 @@ TABULAR = {"alpha": 0.1, "gamma": 0.99, "eps_end": 0.05, "eps_decay_frac": 0.1}
 DQN_DEFAULTS = {
     "CartPole-v1": {"hidden": 128, "lr": 1e-3, "gamma": 0.99, "buffer_size": 50_000, "batch_size": 64,
                     "learning_starts": 1_000, "train_every": 1, "target_sync": 500,
-                    "use_target": True, "eps_end": 0.05, "eps_decay_frac": 0.10},
+                    "use_target": True, "double": False, "eps_end": 0.05, "eps_decay_frac": 0.10},
     "LunarLander-v3": {"hidden": 256, "lr": 5e-4, "gamma": 0.99, "buffer_size": 100_000, "batch_size": 128,
                        "learning_starts": 10_000, "train_every": 4, "target_sync": 1_000,
-                       "use_target": True, "eps_end": 0.05, "eps_decay_frac": 0.12},
+                       "use_target": True, "double": False, "eps_end": 0.05, "eps_decay_frac": 0.12},
 }
 
 
@@ -53,8 +53,9 @@ def make_agent(cfg, env, seed):
         return QLearning(env.action_space.n, cfg["bins"], seed, eps_decay_steps=eps_decay_steps,
                          alpha=cfg["alpha"], gamma=cfg["gamma"], eps_end=cfg["eps_end"])
     if cfg["algo"] == "dqn":
-        from agents.dqn import DQN
-        return DQN(env.observation_space.shape[0], env.action_space.n, seed, eps_decay_steps,
+        from agents.dqn import DQN, DoubleDQN
+        cls = DoubleDQN if cfg.get("double") else DQN   # .get: los config.json de H3/H5 no tienen "double"
+        return cls(env.observation_space.shape[0], env.action_space.n, seed, eps_decay_steps,
                    hidden=cfg["hidden"], lr=cfg["lr"], gamma=cfg["gamma"],
                    buffer_size=cfg["buffer_size"], batch_size=cfg["batch_size"],
                    learning_starts=cfg["learning_starts"], train_every=cfg["train_every"],
