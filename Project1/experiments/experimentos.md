@@ -143,3 +143,16 @@ varía solo ±0.05) y el truncado a 500 pasos la salva. En un episodio más larg
 10k pasos): ~80 a los 20k → episodios cortos, la nave se estrella; meseta 50k–170k cerca de −30 con **exactamente 10**
 en las 3 seeds → cada episodio dura 1000 pasos, la nave flota hasta el truncado (evita el choque, no aterriza); al
 final ~35 → aterriza. Cuando por fin obtiene el premio de aterrizar, aprende de él más seguido y la curva sube.
+
+
+## Ablación sin replay (2026-11-03, Felipe y Steve)
+
+**Qué se corre:** LunarLander, defaults de H5 con `buffer_size = 4` (= `train_every`): cada actualización usa solo
+las 4 transiciones recién jugadas, en orden, y ninguna se vuelve a ver. 300k pasos, seeds 0..2, como el resto del estudio.
+
+**Hipótesis (antes de correr):** comportamiento muy variable entre seeds; retorno final negativo; ninguna seed llega
+a 200; el agente se queda entre estrellarse y flotar.
+
+**Qué pasó:** final −20.8 ± 73.8 (seeds −62.4 / 64.4 / −64.5), 0/3 llegan a 200; ~145 s por corrida (Ryzen 7 6800H, 3 en
+paralelo). La hipótesis se cumple. Seed 2: 164 → −42 → 145 → −41 en evaluaciones seguidas → aprende y desaprende
+varias veces: logra un retorno y lo pierde porque olvida lo que ya había aprendido (Felipe).

@@ -71,6 +71,9 @@ python -m experiments.plot results/CartPole-v1/tabular/bins6 results/CartPole-v1
 python -m experiments.run --env LunarLander-v3 --algo dqn --vary double true --seeds 0 1 2 --jobs 3
 python -m experiments.plot results/LunarLander-v3/dqn/default results/LunarLander-v3/dqn/doubletrue --labels "DQN" "Double DQN" --title "LunarLander-v3: Double vs vanilla (500k)" --out figures/h6_lunar_double --threshold 200
 python -m experiments.overestimation results/LunarLander-v3/dqn/default results/LunarLander-v3/dqn/doubletrue   # sesgo de Q (tabla de H6)
+
+# Ablación sin replay: buffer de 4 = train_every, cada actualización solo ve las 4 transiciones recién jugadas
+python -m experiments.run --env LunarLander-v3 --algo dqn --vary buffer_size 4 --steps 300000 --seeds 0 1 2 --jobs 3
 ```
 
 ## Hitos
