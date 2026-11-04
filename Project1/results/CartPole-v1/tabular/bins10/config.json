@@ -3,11 +3,12 @@
   "algo": "tabular",
   "tag": "bins10",
   "steps": 200000,
-  "bins": 10,
   "alpha": 0.1,
   "gamma": 0.99,
   "eps_end": 0.05,
   "eps_decay_frac": 0.1,
+  "bins": 10,
   "eval_every": 5000,
-  "final_eval_episodes": 100
+  "final_eval_episodes": 100,
+  "hardware": "AMD64 Family 23 Model 96 Stepping 1, AuthenticAMD"
 }

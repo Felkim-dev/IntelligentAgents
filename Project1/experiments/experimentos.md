@@ -66,6 +66,69 @@ Hardware: AMD Ryzen 7 6800H, 1 hilo por corrida, 6 en paralelo.
 - Por explicar en la discusión (Felipe): por qué lr 1e-4 no despega en 300k; por qué copiar cada 4000 se queda cerca
   de 0 y cada 250 no empeora; por qué quitar la target net baja la media y sube la varianza, pero no colapsa.
 
+
+## H4 · Comparación Tier 1: tabular vs DQN en CartPole-v1 (2026-10-29, Steve)
+
+No hay corridas nuevas: se cruzan H2 y H3 (mismo presupuesto, 200k pasos de entrenamiento, 5 seeds, misma
+evaluación). Figuras: `figures/h4_cartpole_compare_*.png` (eje x en pasos) y `figures/h4_cartpole_wallclock_*.png`
+(eje x en segundos).
+
+| | Final (100 ep.) | Seeds ≥ 475 | Mediana de pasos al umbral | Evals ≥ 475 | Reloj por corrida |
+|---|---|---|---|---|---|
+| tabular 6 bins | 186.5 ± 33.4 | 0/5 | no alcanzado | 0 % | ~20–30 s |
+| tabular 10 bins | 145.4 ± 35.6 | 0/5 | no alcanzado | 0 % | ~20–30 s |
+| tabular 20 bins | 135.1 ± 26.5 | 0/5 | no alcanzado | 0 % | ~20–30 s |
+| DQN | 359.5 ± 193.1 | 5/5 | 45k | 60 % | ~170 s |
+
+- **Por pasos, DQN gana con claridad:** llega a 475 en todas las seeds antes de 65k pasos; ningún tabular pasa de
+  ~200 en la curva media. La red generaliza entre estados vecinos; la tabla actualiza una celda por paso y solo
+  visita entre 1.3 % y 19.5 % de sus celdas (ver `report/h7_analisis.md`).
+- **Por tiempo de reloj, empatan al principio:** en los primeros ~30 s, que es lo que tarda una corrida tabular
+  completa, la curva media de DQN está a la par del tabular. DQN se separa después: cada paso cuesta ~6 veces más
+  (forward + backward de la red) y la ventaja solo aparece porque cada paso le enseña más.
+- **Estabilidad:** DQN es mejor, pero inestable; la desviación entre seeds de su final (193) es 6 veces la del tabular,
+  y sus curvas tienen caídas periódicas (H3). El tabular es peor pero más predecible. Por eso se reportan las tres
+  métricas: retorno final, pasos al umbral y fracción de evaluaciones ≥ 475 (respuesta a la pregunta de H3).
+- **Ojo con el reloj:** DQN corrió en el Ryzen 7 6800H de Felipe y el tabular en la laptop de Steve (Zen 2, más lenta),
+  ambos con 1 hilo y varias corridas en paralelo. El sesgo favorece a DQN, así que "el tabular es ≥ 5 veces más
+  rápido por corrida" es una cota conservadora.
+
+
+## H6 · Double DQN vs DQN en LunarLander-v3 (2026-10-29, Steve)
+
+**Qué se corre:** Double DQN con los mismos defaults de H5 (500k pasos, seeds 0..2); solo cambia el target:
+y = r + γ · Q(s', argmax_a Q(s', a; θ); θ⁻). El vanilla es `dqn/default` de H5 (267.7 ± 3.3).
+Hardware: AMD Ryzen (Family 23 Model 96), 1 hilo por corrida, 3 en paralelo.
+
+**Qué esperamos:**
+- Desempeño final parecido al vanilla (≈ 250–270): el default de H5 ya llega al umbral en las 3 seeds con
+  varianza baja, así que hay poco margen para mejorar el retorno final.
+- Si hay diferencia, se verá en la estabilidad: menos sobreestimación de Q → curva de evaluación con menos caídas
+  y quizás llega al umbral un poco antes. Con 3 seeds, una diferencia menor a ~1 desviación no es concluyente.
+- LunarLander tiene solo 4 acciones; el sesgo del máx crece con el número de acciones, así que el efecto de
+  Double debería ser chico aquí (en Atari, con 18 acciones, es más grande).
+- Tiempo de reloj ~10–20 % mayor: Double hace un forward extra de la red online sobre s' en cada actualización.
+
+**Qué pasó** (figuras `figures/h6_lunar_double_*.png`, tabla `figures/h6_lunar_double_summary.csv`):
+
+| | Final (100 ep.) | Seeds ≥ 200 | Mediana de pasos al umbral | Evals ≥ 200 | Sesgo de Q |
+|---|---|---|---|---|---|
+| DQN (H5) | 267.7 ± 3.3 | 3/3 | 220k | 47 % | +19.8 ± 12.5 |
+| Double DQN | 266.0 ± 0.4 | 3/3 | 240k | 48 % | +15.7 ± 10.7 |
+
+Sesgo de Q = media de máx_a Q(s, a) − retorno descontado real desde s, en 10 episodios greedy con la red final
+(`python -m experiments.overestimation ...`).
+- **Acertamos** en que el retorno final queda igual: la diferencia (1.7) es menor que la desviación del vanilla, y las
+  curvas de evaluación se superponen todo el entrenamiento.
+- **No se vio** que Double llegue antes al umbral (mediana 240k vs 220k, dentro del ruido) ni que la curva tenga menos caídas.
+- **Sobreestimación:** las dos redes sobreestiman (~+16 a +20 sobre retornos de ~270). Double reduce el sesgo medio ~20 %,
+  pero con 3 seeds la diferencia no es significativa (las desviaciones se superponen). Coincide con lo esperado
+  para 4 acciones: el sesgo del máx es chico, y Double tiene poco que corregir.
+- **Reloj:** 647 s por corrida vs 343 s del vanilla, pero en hardware distinto (laptop de Steve vs Ryzen 7 6800H de Felipe).
+  Medido en la misma laptop y con la misma carga (seeds 0–1, 30k pasos de aprendizaje), Double cuesta solo ~3 % más
+  (44.4 s vs 43.0 s): el forward extra sobre s' es barato al lado del backward. Esperábamos 10–20 %; fue menos.
+
+
 ## H9 · GIF (episodio greedy por seed)
 
 CartPole: seeds 0, 2 y 3 llegan a 500; seeds 1 (171) y 4 (132) terminan antes. Observación de Felipe en el GIF: el carro

@@ -103,3 +103,12 @@ class DQN:
         self.opt.zero_grad()
         loss.backward()
         self.opt.step()
+
+
+class DoubleDQN(DQN):
+    """Double DQN (Tier 3B, H6): la red online elige a', la target net la evalúa.
+    Desacoplar selección y evaluación quita el sesgo hacia arriba del máx sobre estimaciones ruidosas."""
+
+    def next_value(self, s2):
+        a2 = self.q(s2).argmax(1, keepdim=True)                       # a' = argmax_a Q(s', a; θ)
+        return self.q_target(s2).gather(1, a2).squeeze(1)              # Q(s', a'; θ⁻)
