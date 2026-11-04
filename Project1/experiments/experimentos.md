@@ -75,3 +75,8 @@ arriba, pero no a corregir la deriva del carro. LunarLander: 286.4 / 253.6 / 243
 Prueba de robustez (red de la seed 0, 20 estados iniciales distintos, `reset(seed=100..119)`): **20/20 llegan a 500**
 y todas terminan con x entre −2.08 y −2.13. La deriva es sistemática (la marca la política, no el estado inicial: este
 varía solo ±0.05) y el truncado a 500 pasos la salva. En un episodio más largo el carro llegaría al borde.
+
+**Fases de la curva del default (Felipe, 2026-11-01).** Comprobado con la columna `episodes` (episodios nuevos cada
+10k pasos): ~80 a los 20k → episodios cortos, la nave se estrella; meseta 50k–170k cerca de −30 con **exactamente 10**
+en las 3 seeds → cada episodio dura 1000 pasos, la nave flota hasta el truncado (evita el choque, no aterriza); al
+final ~35 → aterriza. Cuando por fin obtiene el premio de aterrizar, aprende de él más seguido y la curva sube.
